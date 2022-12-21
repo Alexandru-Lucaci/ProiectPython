@@ -460,8 +460,8 @@ class Ui_MainView(object):
             #     self.matrixVal[linie, coloana] = self.round
             #     self.round = (self.round+1) % 2
             #     print(self.matrixVal)
-        else:
-            # player 2 is a robot with minimax algorithm
+        elif self.typeOfGame == 2:
+            # player 2 is a robot with half random moves
             if self.round == 0:
                 # this is player 1
                 if self.matrixVal[linie, coloana] == -1:
@@ -490,7 +490,6 @@ class Ui_MainView(object):
                 else:
                     # check to see if is the first move for ai
                     if self.turnRandom() == 0:
-
                         # choose a random move
                         (linie, coloana) = self.pickRandomNumber()
                         self.whereRobotPutY(linie, coloana)
@@ -516,9 +515,10 @@ class Ui_MainView(object):
                         # check to see if the other player is winning
                         # if he is, block him
                         # if he is not, try to win
-                        if self.theOtherPlayerIsWinning() == 1:
+                        if self.theOtherPlayerIsWinning() != (-1, -1):
                             # block the other player
-                            (linie, coloana) = self.blockTheOtherPlayer()
+                            print("block the other player")
+                            (linie, coloana) = self.theOtherPlayerIsWinning()
                             self.whereRobotPutY(linie, coloana)
                             self.matrixVal[linie, coloana] = self.round
                             self.round = (self.round+1) % 2
@@ -539,9 +539,34 @@ class Ui_MainView(object):
                                     f"{self.scorePlayer1} : {self.scorePlayer2}")
                                 self.resetGame()
                         else:
-                            if self.iAmWinning() == 1:
+                            if self.iAmWinning() != (-1, -1):
                                 # i am winning
-                                (linie, coloana) = self.whereIWin()
+                                print("i am winning")
+                                (linie, coloana) = self.iAmWinning()
+                                self.whereRobotPutY(linie, coloana)
+                                self.matrixVal[linie, coloana] = self.round
+                                self.round = (self.round+1) % 2
+                                print(self.matrixVal)
+                                if self.checkIfDraw() == 1 and self.checkIfWon() == 0:
+                                    self.scorePlayer1 += 1
+                                    self.scorePlayer2 += 1
+                                    self.lblScore.setText(
+                                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                                    self.resetGame()
+                                # check if someone won
+                                elif self.checkIfWon() == 1:
+
+                                    if self.round == 0:
+                                        self.scorePlayer2 += 1
+                                    else:
+                                        self.scorePlayer1 += 1
+                                    self.lblScore.setText(
+                                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                                    self.resetGame()
+                            else:
+                                # this is temporary
+                                # choose a random move
+                                (linie, coloana) = self.pickRandomNumber()
                                 self.whereRobotPutY(linie, coloana)
                                 self.matrixVal[linie, coloana] = self.round
                                 self.round = (self.round+1) % 2
@@ -562,6 +587,40 @@ class Ui_MainView(object):
                                         f"{self.scorePlayer1} : {self.scorePlayer2}")
                                     self.resetGame()
 
+    def iAmWinning(self):
+        # if i have 2 in row or 2 in cols is wining
+        # if i have 2 in diagonals is winning
+        # check rows
+        for i in range(3):
+            if self.matrixVal[i, 0] == 1 and self.matrixVal[i, 1] == 1 and self.matrixVal[i, 2] == -1:
+                return (i, 2)
+            if self.matrixVal[i, 0] == 1 and self.matrixVal[i, 1] == -1 and self.matrixVal[i, 2] == 1:
+                return (i, 1)
+            if self.matrixVal[i, 0] == -1 and self.matrixVal[i, 1] == 1 and self.matrixVal[i, 2] == 1:
+                return (i, 0)
+        # check cols
+        for i in range(3):
+            if self.matrixVal[0, i] == 1 and self.matrixVal[1, i] == 1 and self.matrixVal[2, i] == -1:
+                return (2, i)
+            if self.matrixVal[0, i] == 1 and self.matrixVal[1, i] == -1 and self.matrixVal[2, i] == 1:
+                return (1, i)
+            if self.matrixVal[0, i] == -1 and self.matrixVal[1, i] == 1 and self.matrixVal[2, i] == 1:
+                return (0, i)
+        # check diagonals
+        if self.matrixVal[0, 0] == 1 and self.matrixVal[1, 1] == 1 and self.matrixVal[2, 2] == -1:
+            return (2, 2)
+        if self.matrixVal[0, 0] == 1 and self.matrixVal[1, 1] == -1 and self.matrixVal[2, 2] == 1:
+            return (1, 1)
+        if self.matrixVal[0, 0] == -1 and self.matrixVal[1, 1] == 1 and self.matrixVal[2, 2] == 1:
+            return (0, 0)
+        if self.matrixVal[0, 2] == 1 and self.matrixVal[1, 1] == 1 and self.matrixVal[2, 0] == -1:
+            return (2, 0)
+        if self.matrixVal[0, 2] == 1 and self.matrixVal[1, 1] == -1 and self.matrixVal[2, 0] == 1:
+            return (1, 1)
+        if self.matrixVal[0, 2] == -1 and self.matrixVal[1, 1] == 1 and self.matrixVal[2, 0] == 1:
+            return (0, 2)
+        return (-1, -1)
+
     def theOtherPlayerIsWinning(self):
         # if he has 2 in row or 2 in cols is wining
         # if he has 2 in diagonals is winning
@@ -576,7 +635,7 @@ class Ui_MainView(object):
         # check cols
         for i in range(3):
             if self.matrixVal[0, i] == 0 and self.matrixVal[1, i] == 0 and self.matrixVal[2, i] == -1:
-                return (2, i) 
+                return (2, i)
             if self.matrixVal[0, i] == 0 and self.matrixVal[1, i] == -1 and self.matrixVal[2, i] == 0:
                 return (1, i)
             if self.matrixVal[0, i] == -1 and self.matrixVal[1, i] == 0 and self.matrixVal[2, i] == 0:
@@ -684,6 +743,31 @@ class Ui_MainView(object):
 
                 print("robot is starting")
                 (linie, coloana) = self.pickRandomNumber()
+                self.whereRobotPutY(linie, coloana)
+                self.matrixVal[linie, coloana] = self.round
+                self.round = (self.round+1) % 2
+                print(self.matrixVal)
+                if self.checkIfDraw() == 1 and self.checkIfWon() == 0:
+                    self.scorePlayer1 += 1
+                    self.scorePlayer2 += 1
+                    self.lblScore.setText(
+                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                    self.resetGame()
+                # check if someone won
+                elif self.checkIfWon() == 1:
+                    if self.round == 0:
+                        self.scorePlayer2 += 1
+                    else:
+                        self.scorePlayer1 += 1
+                    self.lblScore.setText(
+                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                    self.resetGame()
+        else:
+            print("i'm here 2")
+            if self.round == 1:
+
+                print("robot is starting")
+                (linie, coloana) = (0, 0)
                 self.whereRobotPutY(linie, coloana)
                 self.matrixVal[linie, coloana] = self.round
                 self.round = (self.round+1) % 2
