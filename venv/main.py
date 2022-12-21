@@ -452,13 +452,14 @@ class Ui_MainView(object):
                         self.lblScore.setText(
                             f"{self.scorePlayer1} : {self.scorePlayer2}")
                         self.resetGame()
-            else:
-                print("robot is starting")
-                (linie, coloana) = self.pickRandomNumber()
-                self.whereRobotPutY(linie, coloana)
-                self.matrixVal[linie, coloana] = self.round
-                self.round = (self.round+1) % 2
-                print(self.matrixVal)
+            # else:
+            #     never in this case
+            #     print("robot is starting")
+            #     (linie, coloana) = self.pickRandomNumber()
+            #     self.whereRobotPutY(linie, coloana)
+            #     self.matrixVal[linie, coloana] = self.round
+            #     self.round = (self.round+1) % 2
+            #     print(self.matrixVal)
 
     def pickRandomNumber(self):
 
@@ -544,7 +545,7 @@ class Ui_MainView(object):
                 self.matrixVal[linie, coloana] = self.round
                 self.round = (self.round+1) % 2
                 print(self.matrixVal)
-                if self.checkIfDraw() == 1:
+                if self.checkIfDraw() == 1 and self.checkIfWon() == 0:
                     self.scorePlayer1 += 1
                     self.scorePlayer2 += 1
                     self.lblScore.setText(
@@ -563,6 +564,8 @@ class Ui_MainView(object):
     def setTypeOfGame(self, typeOfGame):
         self.typeOfGame = typeOfGame
         self.stackedWidget.setCurrentIndex(3)
+        if typeOfGame == 1 or typeOfGame == 2:
+            self.name2 = "ROBOT"
         self.naming = str(self.name1) + " VS " + str(self.name2)
 
         self.lblNaming.setText(self.naming)
