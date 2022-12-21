@@ -791,7 +791,7 @@ class Ui_MainView(object):
     def setTypeOfGame(self, typeOfGame):
         self.typeOfGame = typeOfGame
         self.stackedWidget.setCurrentIndex(3)
-        if typeOfGame == 1 or typeOfGame == 2:
+        if typeOfGame != 0:
             self.name2 = "ROBOT"
         self.naming = str(self.name1) + " VS " + str(self.name2)
 
