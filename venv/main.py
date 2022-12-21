@@ -383,6 +383,8 @@ class Ui_MainView(object):
                     self.matrixVal[linie, coloana] = self.round
                     self.round = (self.round+1) % 2
                     print(self.matrixVal)
+                else:
+                    return
             # check if draw
             if self.checkIfDraw() == 1:
                 self.scorePlayer1 += 1
@@ -409,6 +411,8 @@ class Ui_MainView(object):
                     self.matrixVal[linie, coloana] = self.round
                     self.round = (self.round+1) % 2
                     print(self.matrixVal)
+                else:
+                    return
                 if self.checkIfDraw() == 1:
                     self.scorePlayer1 += 1
                     self.scorePlayer2 += 1
@@ -429,7 +433,7 @@ class Ui_MainView(object):
                     # where to move
                     (linie, coloana) = self.pickRandomNumber()
 
-                    self.whereRobotPutY(linie,coloana)
+                    self.whereRobotPutY(linie, coloana)
                     self.matrixVal[linie, coloana] = self.round
                     self.round = (self.round+1) % 2
                     print(self.matrixVal)
@@ -450,38 +454,22 @@ class Ui_MainView(object):
                         self.resetGame()
             else:
                 print("robot is starting")
-                (linie,coloana)= self.pickRandomNumber()
-                self.whereRobotPutY(linie,coloana)
+                (linie, coloana) = self.pickRandomNumber()
+                self.whereRobotPutY(linie, coloana)
                 self.matrixVal[linie, coloana] = self.round
                 self.round = (self.round+1) % 2
                 print(self.matrixVal)
-                if self.checkIfDraw() == 1:
-                    self.scorePlayer1 += 1
-                    self.scorePlayer2 += 1
-                    self.lblScore.setText(
-                        f"{self.scorePlayer1} : {self.scorePlayer2}")
-                    self.resetGame()
-                # check if someone won
-                elif self.checkIfWon() == 1:
-                    if self.round == 0:
-                        self.scorePlayer2 += 1
-                    else:
-                        self.scorePlayer1 += 1
-                    self.lblScore.setText(
-                        f"{self.scorePlayer1} : {self.scorePlayer2}")
-                    self.resetGame()
-
 
     def pickRandomNumber(self):
-    
+
         while True:
             linie = random.randint(0, 2)
             coloana = random.randint(0, 2)
             if self.matrixVal[linie, coloana] == -1:
                 break
-        return (linie,coloana)
+        return (linie, coloana)
 
-    def whereRobotPutY(self,linie,coloana):
+    def whereRobotPutY(self, linie, coloana):
         for i in range(3):
             for j in range(3):
                 if i == linie and j == coloana:
@@ -512,6 +500,7 @@ class Ui_MainView(object):
                     elif i == 2 and j == 2:
                         self.lbl22.setPixmap(QtGui.QPixmap(
                             "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+
     def checkIfDraw(self):
         for i in range(3):
             for j in range(3):
@@ -546,12 +535,12 @@ class Ui_MainView(object):
         self.lbl22.setPixmap(QtGui.QPixmap(""))
         # self.round = 0
         if self.typeOfGame == 1:
+            print("i'm here 1")
             if self.round == 1:
-                self.round = 0
-            else:
+
                 print("robot is starting")
-                (linie,coloana)= self.pickRandomNumber()
-                self.whereRobotPutY(linie,coloana)
+                (linie, coloana) = self.pickRandomNumber()
+                self.whereRobotPutY(linie, coloana)
                 self.matrixVal[linie, coloana] = self.round
                 self.round = (self.round+1) % 2
                 print(self.matrixVal)
@@ -570,7 +559,6 @@ class Ui_MainView(object):
                     self.lblScore.setText(
                         f"{self.scorePlayer1} : {self.scorePlayer2}")
                     self.resetGame()
-                
 
     def setTypeOfGame(self, typeOfGame):
         self.typeOfGame = typeOfGame
