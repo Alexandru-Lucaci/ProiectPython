@@ -339,25 +339,81 @@ class Ui_MainView(object):
             lambda: self.backBtnRessetName())
         self.btnExitNamePick_3.clicked.connect(lambda: exit())
         self.lbl00.mousePressEvent = lambda event: self.modifying(
-            event, self.lbl00)
+            event, self.lbl00, 0, 0)
+        self.lbl01.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl01, 0, 1)
+        self.lbl02.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl02, 0, 2)
+        self.lbl10.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl10, 1, 0)
+        self.lbl11.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl11, 1, 1)
+        self.lbl12.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl12, 1, 2)
+        self.lbl20.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl20, 2, 0)
+        self.lbl21.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl21, 2, 1)
+        self.lbl22.mousePressEvent = lambda event: self.modifying(
+            event, self.lbl22, 2, 2)
+
 
     def changeToNames(self, type, index):
         self.typeOfGame = type
         self.stackedWidget.setCurrentIndex(index)
 
-    def modifying(self, event, id):
+    def modifying(self, event, id, linie, coloana):
+        # round 0 -> player 1
+        # round 1 -> player 2
         print(event)
         print(id.accessibleName())
         if self.round == 0:
-
-            id.setPixmap(QtGui.QPixmap(
-                "D:\\git\\GitHub\\ProiectPython\\venv\\x.png"))
-            self.round = (self.round+1) % 2
+            if self.matrixVal[linie, coloana] == -1:
+                id.setPixmap(QtGui.QPixmap(
+                    "D:\\git\\GitHub\\ProiectPython\\venv\\x.png"))
+                self.matrixVal[linie, coloana] = self.round
+                self.round = (self.round+1) % 2
+                print(self.matrixVal)
         else:
-            id.setPixmap(QtGui.QPixmap(
-                "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-            self.round = (self.round+1) % 2
-
+            if self.matrixVal[linie, coloana] == -1:
+                id.setPixmap(QtGui.QPixmap(
+                    "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                self.matrixVal[linie, coloana] = self.round
+                self.round = (self.round+1) % 2
+                print(self.matrixVal)
+        # check if someone won
+        if self.checkIfWon() == 1:
+            if self.round == 0:
+                self.scorePlayer2 += 1
+            else:
+                self.scorePlayer1 += 1
+            self.lblScore.setText(f"{self.scorePlayer1} : {self.scorePlayer2}")
+            self.resetGame()
+    def checkIfWon(self):
+        # check if someone won
+        for i in range(3):
+            if self.matrixVal[i, 0] == self.matrixVal[i, 1] and self.matrixVal[i, 1] == self.matrixVal[i, 2] and self.matrixVal[i, 0] != -1:
+                return 1
+        for i in range(3):
+            if self.matrixVal[0, i] == self.matrixVal[1, i] and self.matrixVal[1, i] == self.matrixVal[2, i] and self.matrixVal[0, i] != -1:
+                return 1
+        if self.matrixVal[0, 0] == self.matrixVal[1, 1] and self.matrixVal[1, 1] == self.matrixVal[2, 2] and self.matrixVal[0, 0] != -1:
+            return 1
+        if self.matrixVal[0, 2] == self.matrixVal[1, 1] and self.matrixVal[1, 1] == self.matrixVal[2, 0] and self.matrixVal[0, 2] != -1:
+            return 1
+        return 0
+    def resetGame(self):
+        self.matrixVal = np.full((3, 3), -1)
+        self.lbl00.setPixmap(QtGui.QPixmap(""))
+        self.lbl01.setPixmap(QtGui.QPixmap(""))
+        self.lbl02.setPixmap(QtGui.QPixmap(""))
+        self.lbl10.setPixmap(QtGui.QPixmap(""))
+        self.lbl11.setPixmap(QtGui.QPixmap(""))
+        self.lbl12.setPixmap(QtGui.QPixmap(""))
+        self.lbl20.setPixmap(QtGui.QPixmap(""))
+        self.lbl21.setPixmap(QtGui.QPixmap(""))
+        self.lbl22.setPixmap(QtGui.QPixmap(""))
+        # self.round = 0
     def setTypeOfGame(self, typeOfGame):
         self.typeOfGame = typeOfGame
         self.stackedWidget.setCurrentIndex(3)
@@ -367,14 +423,14 @@ class Ui_MainView(object):
         self.scorePlayer1 = 0
         self.scorePlayer2 = 0
         self.round = 0
-        self.matrixVal = np.zeros((3, 3))
+        self.matrixVal = np.full((3, 3), -1)
         print(self.matrixVal)
         # x an 0 game (tic tac toe)
         print(self.typeOfGame)
 
         for i in range(3):
             for j in range(3):
-                if (self.matrixVal[i][j] == 0):
+                if (self.matrixVal[i][j] == -1):
                     if i == 0:
                         if j == 0:
                             self.lbl00.setPixmap(QtGui.QPixmap(
