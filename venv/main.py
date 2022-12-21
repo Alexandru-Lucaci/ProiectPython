@@ -367,7 +367,7 @@ class Ui_MainView(object):
         # round 1 -> player 2
         print(event)
         print(id.accessibleName())
-        print(f"type of game {self.typeOfGame}" )
+        print(f"type of game {self.typeOfGame}")
         if self.typeOfGame == 0:
             if self.round == 0:
                 if self.matrixVal[linie, coloana] == -1:
@@ -427,45 +427,9 @@ class Ui_MainView(object):
                 else:
                     # now the robot is moving and we need to find a random place
                     # where to move
-                    while True:
-                        linie = random.randint(0, 2)
-                        coloana = random.randint(0, 2)
-                        if self.matrixVal[linie, coloana] == -1:
-                            break
-                    print(linie,coloana)
-                    for i in range(3):
-                        for j in range(3):
-                            if i == linie and j == coloana:
-                                if i == 0 and j == 0:
-                                    self.lbl00.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 0 and j == 1:
-                                    self.lbl01.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 0 and j == 2:
-                                    self.lbl02.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 1 and j == 0:
-                                    self.lbl10.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 1 and j == 1:
-                                    self.lbl11.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 1 and j == 2:
-                                    self.lbl12.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 2 and j == 0:
-                                    self.lbl20.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 2 and j == 1:
-                                    self.lbl21.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
-                                elif i == 2 and j == 2:
-                                    self.lbl22.setPixmap(QtGui.QPixmap(
-                                        "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    (linie, coloana) = self.pickRandomNumber()
 
-
-
+                    self.whereRobotPutY(linie,coloana)
                     self.matrixVal[linie, coloana] = self.round
                     self.round = (self.round+1) % 2
                     print(self.matrixVal)
@@ -486,8 +450,68 @@ class Ui_MainView(object):
                         self.resetGame()
             else:
                 print("robot is starting")
+                (linie,coloana)= self.pickRandomNumber()
+                self.whereRobotPutY(linie,coloana)
+                self.matrixVal[linie, coloana] = self.round
+                self.round = (self.round+1) % 2
+                print(self.matrixVal)
+                if self.checkIfDraw() == 1:
+                    self.scorePlayer1 += 1
+                    self.scorePlayer2 += 1
+                    self.lblScore.setText(
+                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                    self.resetGame()
+                # check if someone won
+                elif self.checkIfWon() == 1:
+                    if self.round == 0:
+                        self.scorePlayer2 += 1
+                    else:
+                        self.scorePlayer1 += 1
+                    self.lblScore.setText(
+                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                    self.resetGame()
+                    
 
+    def pickRandomNumber(self):
+    
+        while True:
+            linie = random.randint(0, 2)
+            coloana = random.randint(0, 2)
+            if self.matrixVal[linie, coloana] == -1:
+                break
+        return (linie,coloana)
 
+    def whereRobotPutY(self,linie,coloana):
+        for i in range(3):
+            for j in range(3):
+                if i == linie and j == coloana:
+                    if i == 0 and j == 0:
+                        self.lbl00.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 0 and j == 1:
+                        self.lbl01.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 0 and j == 2:
+                        self.lbl02.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 1 and j == 0:
+                        self.lbl10.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 1 and j == 1:
+                        self.lbl11.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 1 and j == 2:
+                        self.lbl12.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 2 and j == 0:
+                        self.lbl20.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 2 and j == 1:
+                        self.lbl21.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
+                    elif i == 2 and j == 2:
+                        self.lbl22.setPixmap(QtGui.QPixmap(
+                            "D:\\git\\GitHub\\ProiectPython\\venv\\0.png"))
     def checkIfDraw(self):
         for i in range(3):
             for j in range(3):
