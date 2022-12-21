@@ -218,8 +218,11 @@ class Ui_MainView(object):
         self.btnPlayerVSPlayer.setGeometry(QtCore.QRect(0, 30, 771, 91))
         self.btnPlayerVSPlayer.setObjectName("btnPlayerVSPlayer")
         self.btnRobotAI = QtWidgets.QPushButton(self.pageSelectGameType)
-        self.btnRobotAI.setGeometry(QtCore.QRect(0, 250, 771, 91))
+        self.btnRobotAI.setGeometry(QtCore.QRect(0, 250, 391, 91))
         self.btnRobotAI.setObjectName("btnRobotAI")
+        self.btnRobotAISmart = QtWidgets.QPushButton(self.pageSelectGameType)
+        self.btnRobotAISmart.setGeometry(QtCore.QRect(390, 250, 381, 91))
+
         self.btnExit = QtWidgets.QPushButton(self.pageSelectGameType)
         self.btnExit.setGeometry(QtCore.QRect(0, 360, 381, 91))
         self.btnExit.setObjectName("btnExit")
@@ -283,10 +286,12 @@ class Ui_MainView(object):
         self.lblScore.setText(_translate("MainView", "0:0"))
         self.btnRobotRandom.setText(_translate(
             "MainView", "Robot ( random choices)"))
+        self.btnRobotAISmart.setText(_translate(
+            "MainView", "Robot ( smart choices)"))
         self.btnPlayerVSPlayer.setText(
             _translate("MainView", "Player VS Player"))
         self.btnRobotAI.setText(_translate(
-            "MainView", "Robot ( best choices)"))
+            "MainView", "Robot ( good choices)"))
         self.btnExit.setText(_translate("MainView", "Exit"))
         self.btnBack.setText(_translate("MainView", "Back"))
         self.menuConfig.setTitle(_translate("MainView", "Config"))
@@ -309,6 +314,8 @@ class Ui_MainView(object):
             lambda: self.changeToNames(1, 2))
         self.btnRobotAI.clicked.connect(
             lambda: self.changeToNames(2, 2))
+        self.btnRobotAISmart.clicked.connect(
+            lambda: self.changeToNames(3, 2))
 
         # PageSetPlayerNames Buttons
         self.btnBackNamePick.clicked.connect(
@@ -566,26 +573,70 @@ class Ui_MainView(object):
                             else:
                                 # this is temporary
                                 # choose a random move
-                                (linie, coloana) = self.pickRandomNumber()
-                                self.whereRobotPutY(linie, coloana)
-                                self.matrixVal[linie, coloana] = self.round
-                                self.round = (self.round+1) % 2
-                                print(self.matrixVal)
-                                if self.checkIfDraw() == 1 and self.checkIfWon() == 0:
-                                    self.scorePlayer1 += 1
-                                    self.scorePlayer2 += 1
-                                    self.lblScore.setText(
-                                        f"{self.scorePlayer1} : {self.scorePlayer2}")
-                                    self.resetGame()
-                                # check if someone won
-                                elif self.checkIfWon() == 1:
-                                    if self.round == 0:
-                                        self.scorePlayer2 += 1
-                                    else:
-                                        self.scorePlayer1 += 1
-                                    self.lblScore.setText(
-                                        f"{self.scorePlayer1} : {self.scorePlayer2}")
-                                    self.resetGame()
+                                self.board = {1: self.matrixVal[0, 0], 2: self.matrixVal[0, 1], 3: self.matrixVal[0, 2], 4: self.matrixVal[1, 0],
+                                              5: self.matrixVal[1, 1], 6: self.matrixVal[1, 2], 7: self.matrixVal[2, 0], 8: self.matrixVal[2, 1], 9: self.matrixVal[2, 2]}
+                                self.printBoard()
+                                print(self.spaceIsFree(1))
+                                print(self.spaceIsFree(2))
+
+    def spaceIsFree(self, position):
+        if self.board[position] == -1:
+            return True
+        return False
+
+    def insertLetter(self, letter, position):
+        if self.spaceIsFree(position):
+            self.board[position] = letter
+            self.printBoard()
+            if self.checkDraw() and self.checkForWin() == False:
+                print("Draw")
+                exit()
+            if self.checkForWin():
+                if letter == 0:
+                    print("Player 1 won")
+                    exit()
+                else:
+                    print("Bot won")
+                    exit()
+            return
+        else:
+            print("Space is not free")
+            exit()
+
+    def checkDraw(self):
+        for i in self.board.keys():
+            if self.board[i] == -1:
+                return False
+        return True
+
+    def checkForWin(self):
+        if self.board[1] == self.board[2] == self.board[3] and self.board[1] != -1:
+            return True
+        if self.board[4] == self.board[5] == self.board[6] and self.board[4] != -1:
+            return True
+        if self.board[7] == self.board[8] == self.board[9] and self.board[7] != -1:
+            return True
+        if self.board[1] == self.board[4] == self.board[7] and self.board[1] != -1:
+            return True
+        if self.board[2] == self.board[5] == self.board[8] and self.board[2] != -1:
+            return True
+        if self.board[3] == self.board[6] == self.board[9] and self.board[3] != -1:
+            return True
+        if self.board[1] == self.board[5] == self.board[9] and self.board[1] != -1:
+            return True
+        if self.board[3] == self.board[5] == self.board[7] and self.board[3] != -1:
+            return True
+        return False
+
+    def printBoard(self):
+        print(str(self.board[1]) + '|' +
+              str(self.board[2]) + '|' + str(self.board[3]))
+        print('-----')
+        print(str(self.board[4]) + '|' +
+              str(self.board[5]) + '|' + str(self.board[6]))
+        print('-----')
+        print(str(self.board[7]) + '|' +
+              str(self.board[8]) + '|' + str(self.board[9]))
 
     def iAmWinning(self):
         # if i have 2 in row or 2 in cols is wining
