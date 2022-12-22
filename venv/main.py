@@ -578,11 +578,86 @@ class Ui_MainView(object):
                                 self.printBoard()
                                 print(self.spaceIsFree(1))
                                 print(self.spaceIsFree(2))
+                                self.compMove()
+                                print(self.board)
+                                if self.board[1] == 1 and self.matrixVal[0, 0] != 1:
+                                    self.matrixVal[0, 0] = self.board[1]
+                                    self.whereRobotPutY(0, 0)
+                                elif self.board[2] == 1 and self.matrixVal[0, 1] != 1:
+                                    self.matrixVal[0, 1] = self.board[2]
+                                    self.whereRobotPutY(0, 1)
+                                elif self.board[3] == 1 and self.matrixVal[0, 2] != 1:
+                                    self.matrixVal[0, 2] = self.board[3]
+                                    self.whereRobotPutY(0, 2)
+                                elif self.board[4] == 1 and self.matrixVal[1, 0] != 1:
+                                    self.matrixVal[1, 0] = self.board[4]
+                                    self.whereRobotPutY(1, 0)
+                                elif self.board[5] == 1 and self.matrixVal[1, 1] != 1:
+                                    self.matrixVal[1, 1] = self.board[5]
+                                    self.whereRobotPutY(1, 1)
+                                elif self.board[6] == 1 and self.matrixVal[1, 2] != 1:
+                                    self.matrixVal[1, 2] = self.board[6]
+                                    self.whereRobotPutY(1, 2)
+                                elif self.board[7] == 1 and self.matrixVal[2, 0] != 1:
+                                    self.matrixVal[2, 0] = self.board[7]
+                                    self.whereRobotPutY(2, 0)
+                                elif self.board[8] == 1 and self.matrixVal[2, 1] != 1:
+                                    self.matrixVal[2, 1] = self.board[8]
+                                    self.whereRobotPutY(2, 1)
+                                elif self.board[9] == 1 and self.matrixVal[2, 2] != 1:
+                                    self.matrixVal[2, 2] = self.board[9]
+                                    self.whereRobotPutY(2, 2)
+                                self.round = (self.round+1) % 2
+
+                                print(self.matrixVal)
 
     def spaceIsFree(self, position):
         if self.board[position] == -1:
             return True
         return False
+
+    def compMove(self):
+        self.bestScore = -1000
+        self.bestMove = 0
+        for key in self.board.keys():
+            if self.board[key] == -1:
+                self.board[key] = 1
+                self.score = self.minimax(self.board, 0, False)
+                self.board[key] = -1
+                if self.score > self.bestScore:
+                    self.bestScore = self.score
+                    self.bestMove = key
+        self.insertLetter(1, self.bestMove)
+
+    def minimax(self, board, depth, isMaximizing):
+        if self.checkWhichMarkWon(1):
+            return 100
+        elif self.checkWhichMarkWon(0):
+            return -100
+        elif self.checkDraw():
+            return 0
+
+        if isMaximizing:
+            bestScore = -1000
+
+            for key in board.keys():
+                if board[key] == -1:
+                    board[key] = 1
+                    score = self.minimax(board, 0, False)
+                    board[key] = -1
+                    if score > bestScore:
+                        bestScore = score
+            return bestScore
+        else:
+            bestScore = 1000
+            for key in board.keys():
+                if board[key] == -1:
+                    board[key] = 0
+                    score = self.minimax(board, 0, True)
+                    board[key] = -1
+                    if score < bestScore:
+                        bestScore = self.score
+            return bestScore
 
     def insertLetter(self, letter, position):
         if self.spaceIsFree(position):
@@ -625,6 +700,25 @@ class Ui_MainView(object):
         if self.board[1] == self.board[5] == self.board[9] and self.board[1] != -1:
             return True
         if self.board[3] == self.board[5] == self.board[7] and self.board[3] != -1:
+            return True
+        return False
+
+    def checkWhichMarkWon(self, mark):
+        if self.board[1] == self.board[2] == self.board[3] and self.board[1] != mark:
+            return True
+        if self.board[4] == self.board[5] == self.board[6] and self.board[4] != mark:
+            return True
+        if self.board[7] == self.board[8] == self.board[9] and self.board[7] != mark:
+            return True
+        if self.board[1] == self.board[4] == self.board[7] and self.board[1] != mark:
+            return True
+        if self.board[2] == self.board[5] == self.board[8] and self.board[2] != mark:
+            return True
+        if self.board[3] == self.board[6] == self.board[9] and self.board[3] != mark:
+            return True
+        if self.board[1] == self.board[5] == self.board[9] and self.board[1] != mark:
+            return True
+        if self.board[3] == self.board[5] == self.board[7] and self.board[3] != mark:
             return True
         return False
 
