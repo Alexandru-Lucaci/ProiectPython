@@ -6,6 +6,7 @@ import os
 import subprocess
 import numpy as np
 import random
+from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_MainView(object):
@@ -302,7 +303,7 @@ class Ui_MainView(object):
         self.typeOfGame = -1
         self.btnStart.clicked.connect(
             lambda: self.stackedWidget.setCurrentIndex(4))
-        # self.btnCerinta.clicked.connect()
+        self.btnCerinta.clicked.connect(lambda: self.cerinta())
         self.btnExitStartUp.clicked.connect(lambda: exit())
         # PageSelectGameType Buttons
         self.btnBack.clicked.connect(
@@ -757,6 +758,28 @@ class Ui_MainView(object):
                     self.bestScore = self.score
                     self.bestMove = key
         self.insertLetter(1, self.bestMove)
+
+    def cerinta(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Cerinta")
+        msg.setText("Name: X si 0")
+        msg.setIcon(QMessageBox.Information)
+        msg.setStandardButtons(
+            QMessageBox.Ok )
+        msg.setDefaultButton(QMessageBox.Ok)
+        msg.setInformativeText("""Creati un joc de X si 0. Utilizatorul primeste de fiecare data un string pe mai multe linii cu
+situatia actuala a table / exista o interfata grafica si este intrebat care patratel vrea sa fie
+completat / da el click pe patratel.""")
+        msg.setDetailedText("""La final programul va spune cine a castigat si va intreba
+daca mai joaca o data. Scorul total se va afisa la finalul fiecarui meci. Vor fi 3 nivele de
+dificultate:
+1. AI-ul muta random
+2. AI-ul muta o data random, alta data folosind cea mai buna mutare posibila
+3. AI-ul muta de fiecare data folosind cea mai buna mutare posibila""")
+
+        # msg.buttonClicked.connect(popup_button)
+
+        x = msg.exec_()
 
     def minimax(self, board, depth, isMaximizing):
         if self.checkWhichMarkWon(1):
