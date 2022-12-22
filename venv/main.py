@@ -375,6 +375,7 @@ class Ui_MainView(object):
         print(event)
         print(id.accessibleName())
         print(f"type of game {self.typeOfGame}")
+        print(f"round {self.round}")
         if self.typeOfGame == 0:
             if self.round == 0:
                 if self.matrixVal[linie, coloana] == -1:
@@ -571,8 +572,6 @@ class Ui_MainView(object):
                                         f"{self.scorePlayer1} : {self.scorePlayer2}")
                                     self.resetGame()
                             else:
-                                # this is temporary
-                                # choose a random move
                                 self.board = {1: self.matrixVal[0, 0], 2: self.matrixVal[0, 1], 3: self.matrixVal[0, 2], 4: self.matrixVal[1, 0],
                                               5: self.matrixVal[1, 1], 6: self.matrixVal[1, 2], 7: self.matrixVal[2, 0], 8: self.matrixVal[2, 1], 9: self.matrixVal[2, 2]}
                                 self.printBoard()
@@ -610,6 +609,39 @@ class Ui_MainView(object):
                                 self.round = (self.round+1) % 2
 
                                 print(self.matrixVal)
+        elif self.typeOfGame == 3:
+            print("3")
+            if self.round == 0:
+
+                if self.matrixVal[linie, coloana] == -1:
+                    id.setPixmap(QtGui.QPixmap(
+                        "D:\\git\\GitHub\\ProiectPython\\venv\\x.png"))
+                    self.matrixVal[linie, coloana] = self.round
+                    self.round = (self.round+1) % 2
+                    print(self.matrixVal)
+                else:
+                    return
+                if self.checkIfDraw() == 1 and self.checkIfWon() == 0:
+                    self.scorePlayer1 += 1
+                    self.scorePlayer2 += 1
+                    self.lblScore.setText(
+                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                    self.resetGame()
+                # check if someone won
+                elif self.checkIfWon() == 1:
+                    if self.round == 0:
+                        self.scorePlayer2 += 1
+                    else:
+                        self.scorePlayer1 += 1
+                    self.lblScore.setText(
+                        f"{self.scorePlayer1} : {self.scorePlayer2}")
+                    self.resetGame()
+                else:
+                    print("Robotul trebuie sa mute")
+                    print(self.matrixVal)
+                    self.board = {1: self.matrixVal[0, 0], 2: self.matrixVal[0, 1], 3: self.matrixVal[0, 2], 4: self.matrixVal[1, 0],
+                                  5: self.matrixVal[1, 1], 6: self.matrixVal[1, 2], 7: self.matrixVal[2, 0], 8: self.matrixVal[2, 1], 9: self.matrixVal[2, 2]}
+                    self.printBoard()
 
     def spaceIsFree(self, position):
         if self.board[position] == -1:
