@@ -365,6 +365,7 @@ class Ui_MainView(object):
             event, self.lbl21, 2, 1)
         self.lbl22.mousePressEvent = lambda event: self.modifying(
             event, self.lbl22, 2, 2)
+        self.setFirst = True
 
     def changeToNames(self, type, index):
         self.typeOfGame = type
@@ -437,15 +438,56 @@ class Ui_MainView(object):
                     self.lblScore.setText(
                         f"{self.scorePlayer1} : {self.scorePlayer2}")
                     self.resetGame()
-                else:
-                    # now the robot is moving and we need to find a random place
-                    # where to move
-                    (linie, coloana) = self.pickRandomNumber()
 
-                    self.whereRobotPutY(linie, coloana)
-                    self.matrixVal[linie, coloana] = self.round
-                    self.round = (self.round+1) % 2
-                    print(self.matrixVal)
+                else:
+                    # set first time
+
+                    # open file and read the moves
+
+                    #  choose a random line from the file
+                    if self.setFirst == True:
+                        self.lines = open(
+                            "D:\\git\\GitHub\\ProiectPython\\input.txt", "r").readlines()
+
+                        print(len(self.lines))
+                        self.randomLine = random.randint(1, len(self.lines))
+                        print(self.lines[self.randomLine-1])
+                        print(self.randomLine)
+
+                        self.listOfTuples = []
+                        self.currentTuple = ()
+                        self.one = 0
+                        for value in self.lines[self.randomLine-1].split():
+                            if self.one == 0:
+                                self.currentTuple += (int(value),)
+                                self.one = 1
+                            else:
+                                self.currentTuple += (int(value),)
+                                self.one = 0
+                                self.listOfTuples.append(self.currentTuple)
+                                self.currentTuple = ()
+                    print(self.listOfTuples)
+                    self.setFirst = False
+                    self.madeAMove = False
+                    for line in self.listOfTuples:
+
+                        (linie, coloana) = line
+                        (linie, coloana) = (int(linie), int(coloana))
+                        print(f"linie {linie} coloana {coloana}")
+                        if self.matrixVal[linie, coloana] == -1 and self.madeAMove == False:
+                            print('yess')
+                            self.madeAMove = True
+                            print(f"linie {linie} coloana {coloana}")
+                            self.whereRobotPutY(linie, coloana)
+                            self.matrixVal[linie, coloana] = self.round
+                            self.round = (self.round+1) % 2
+                            print(self.matrixVal)
+                    if self.madeAMove == False:
+                        (linie, coloana) = self.pickRandomNumber()
+                        self.whereRobotPutY(linie, coloana)
+                        self.matrixVal[linie, coloana] = self.round
+                        self.round = (self.round+1) % 2
+                        print(self.matrixVal)
                     if self.checkIfDraw() == 1 and self.checkIfWon() == 0:
                         self.scorePlayer1 += 1
                         self.scorePlayer2 += 1
@@ -765,7 +807,7 @@ class Ui_MainView(object):
         msg.setText("Name: X si 0")
         msg.setIcon(QMessageBox.Information)
         msg.setStandardButtons(
-            QMessageBox.Ok )
+            QMessageBox.Ok)
         msg.setDefaultButton(QMessageBox.Ok)
         msg.setInformativeText("""Creati un joc de X si 0. Utilizatorul primeste de fiecare data un string pe mai multe linii cu
 situatia actuala a table / exista o interfata grafica si este intrebat care patratel vrea sa fie
@@ -1033,6 +1075,7 @@ dificultate:
         self.lbl20.setPixmap(QtGui.QPixmap(""))
         self.lbl21.setPixmap(QtGui.QPixmap(""))
         self.lbl22.setPixmap(QtGui.QPixmap(""))
+        self.setFirst = True
         # self.round = 0
         if self.typeOfGame == 1:
             print("i'm here 1")
